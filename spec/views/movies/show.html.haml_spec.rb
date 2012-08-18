@@ -7,6 +7,7 @@ describe "movies/show" do
   @movie.stub!(:release_date).and_return Date.today
   @movie.stub!(:rating).and_return "PG-13"
   @movie.stub!(:description).and_return nil
+  @movie.stub!(:director).and_return "Sylvester Stallone"
   assigns[:movie] = @movie
  end
 
