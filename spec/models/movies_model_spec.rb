@@ -13,5 +13,11 @@ describe Movie do
     movies.should include(movie2)
     movies.should_not include(movie3)
   end
+
+  describe "all ratings" do
+   it "should give list of all ratings as collection" do
+    Movie.all_ratings.should == ["G", "PG", "PG-13", "NC-17", "R"]
+   end
+  end
  end
 end
