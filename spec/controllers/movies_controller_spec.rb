@@ -39,5 +39,23 @@ describe MoviesController do
    flash.now[:notice].should_not be_nil
    flash.now[:notice].should == "'#{movie.title}' has no director info"
   end
- end 
+ end
+
+ describe "Show Action" do
+  it "should assign movie to controller instance variable" do
+   movie = mock('Movie')
+   movie.stub(:id).and_return("3")
+   Movie.stub(:find).and_return(movie)
+   get :show,{:id=>3}
+   assigns(:movie).should==movie
+  end
+ end
+
+ describe "Create Action" do
+  it "it should create a new Movie" do
+   expect{
+     post :create, movie: {:title=>"Ghost Protocol",:director=>"Tom Hanks",:release_date=>Date.today-100,:rating=>"PG"}
+   }.to change(Movie,:count).by(1)
+  end
+ end
 end
