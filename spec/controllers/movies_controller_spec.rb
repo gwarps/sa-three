@@ -57,5 +57,62 @@ describe MoviesController do
      post :create, movie: {:title=>"Ghost Protocol",:director=>"Tom Hanks",:release_date=>Date.today-100,:rating=>"PG"}
    }.to change(Movie,:count).by(1)
   end
+
+  it "should assign @movie variable and display flash message" do
+   movie = mock('Movie')
+   movie.stub(:title).and_return("Ghost Protocol")
+   Movie.stub(:create!).and_return(movie)
+   post :create, movie: {:title=>"Ghost Protocol",:director=>"Tom Hanks",:release_date=>Date.today-100,:rating=>"PG"}
+   assigns(:movie).should==movie
+   flash.now[:notice].should == "#{movie.title} was successfully created."
+   response.should redirect_to(movies_path)
+  end
+ end
+
+ describe "Update Action" do
+  it "should assign and update" do
+   movie = mock('Movie')
+   movie.stub(:id).and_return("3")
+   movie.stub(:title).and_return("Ghost Protocol")
+   movie.stub(:update_attributes!).and_return(:true)
+   Movie.stub(:find).and_return(movie)
+   post :update, {:id=>3}
+   assigns(:movie).should==movie
+   flash.now[:notice].should == "#{movie.title} was successfully updated."
+   response.should redirect_to(movie_path(movie))
+  end
+ end
+
+ describe "Destroy Action" do
+  it "should call destroy and display with flash message followed by redirection" do
+   movie = mock('Movie')
+   movie.stub(:id).and_return("3")
+   movie.stub(:title).and_return("Ghost Protocol")
+   movie.stub(:destroy).and_return(:true)
+   Movie.stub(:find).and_return(movie)
+   
+   post :destroy, {:id=>3}
+   assigns(:movie).should==movie
+   flash.now[:notice].should == "Movie '#{movie.title}' deleted."
+   response.should redirect_to(movies_path)
+  end
+ end
+
+ describe "Index Action" do
+  it "should assign session for ratings" do
+   session[:ratings]=nil
+   get :index,:ratings=>{"NC-17"=>"1", "R"=>"1"}
+   assigns(:selected_ratings).should=={"NC-17"=>"1", "R"=>"1"}
+   session[:ratings].should=={"NC-17"=>"1", "R"=>"1"}
+   session[:sort].should be_nil
+  end
+
+  it "should assign session for sort values" do
+   session[:sort] = nil
+   get :index,:sort=>"title"
+   assigns(:title_header).should == "hilite"
+   session[:sort].should == "title"
+   session[:ratings].should be_nil
+  end
  end
 end
